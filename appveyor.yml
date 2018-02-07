@@ -1,0 +1,15 @@
+version: '{build}'
+skip_non_tags: true
+image: Visual Studio 2017
+environment:
+  nuget_key:
+    secure: xUmS9XKGSPKE3xAm/bvBD4St6an/7BlfLGUuIS8jPl8ofhKESLQpgXmQJ/8Cjx+C
+build_script:
+- ps: |
+    dotnet restore
+    cd ./src/JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+    dotnet pack -c release /p:version=$env:APPVEYOR_REPO_TAG_NAME
+deploy_script:
+- ps: |
+    nuget setApiKey $env:nuget_key
+    nuget push "./bin/release/JeremyTCD.DocFx.Plugins.BlockquoteRenderer.$($env:APPVEYOR_REPO_TAG_NAME).nupkg" -Source https://www.nuget.org/api/v2/package

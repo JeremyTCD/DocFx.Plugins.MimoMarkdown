@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>net461</TargetFramework>
+      <AssemblyName>JeremyTCD.DocFx.Plugins.BlockquoteRenderer</AssemblyName>
+      <PackageId>JeremyTCD.DocFx.Plugins.BlockquoteRenderer</PackageId>
+      <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+      <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+      <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+      <Authors>JeremyTCD</Authors>
+      <Copyright>Copyright © JeremyTCD 2017</Copyright>
+      <Description>A DocFx markdown rendering plugin. BlockquoteRenderer renders blocks.</Description>
+      <PackageLicenseUrl>https://github.com/JeremyTCD/DocFx.Plugins.BlockquoteRenderer/blob/master/License.txt</PackageLicenseUrl>
+      <PackageProjectUrl>https://github.com/JeremyTCD/DocFx.Plugins.BlockquoteRenderer</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/JeremyTCD/DocFx.Plugins.BlockquoteRenderer</RepositoryUrl>
+      <RepositoryType>GitHub</RepositoryType>
+      <PackageTags>DocFx Plugin Renderer Blockquote</PackageTags>
+      <NeutralLanguage>English</NeutralLanguage>
+      <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Users\Jeremy\Documents\Visual Studio 2017\Projects\JeremyTCD.DocFx.Themes.Mimo\examples\blog\bin\theme\plugins</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DocAsCode.Dfm" Version="2.31.0" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="1.0.31" />
+  </ItemGroup>
+
+</Project>
