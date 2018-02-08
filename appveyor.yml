@@ -7,9 +7,9 @@ environment:
 build_script:
 - ps: |
     dotnet restore
-    cd ./src/JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+    cd ./src/JeremyTCD.DocFx.Plugins.MimoMarkdown
     dotnet pack -c release /p:version=$env:APPVEYOR_REPO_TAG_NAME
 deploy_script:
 - ps: |
     nuget setApiKey $env:nuget_key
-    nuget push "./bin/release/JeremyTCD.DocFx.Plugins.BlockquoteRenderer.$($env:APPVEYOR_REPO_TAG_NAME).nupkg" -Source https://www.nuget.org/api/v2/package
+    nuget push "./bin/release/JeremyTCD.DocFx.Plugins.MimoMarkdown.$($env:APPVEYOR_REPO_TAG_NAME).nupkg" -Source https://www.nuget.org/api/v2/package

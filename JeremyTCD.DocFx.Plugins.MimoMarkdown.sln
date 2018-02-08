@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JeremyTCD.DocFx.Plugins.AlertRenderer", "JeremyTCD.DocFx.Plugins.AlertRenderer\JeremyTCD.DocFx.Plugins.AlertRenderer.csproj", "{CBCE46CA-D1B7-41CA-8070-3545D54AD0A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JeremyTCD.DocFx.Plugins.MimoMarkdown", "JeremyTCD.DocFx.Plugins.MimoMarkdown\JeremyTCD.DocFx.Plugins.MimoMarkdown.csproj", "{CBCE46CA-D1B7-41CA-8070-3545D54AD0A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A310FB83-860F-4C4A-8D44-9EBF9A414F22}"
 	ProjectSection(SolutionItems) = preProject

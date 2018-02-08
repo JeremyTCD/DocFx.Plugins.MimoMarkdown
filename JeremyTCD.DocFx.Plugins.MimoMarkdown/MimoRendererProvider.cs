@@ -2,10 +2,10 @@
 using System.Composition;
 using Microsoft.DocAsCode.Dfm;
 
-namespace JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     [Export(typeof(IDfmCustomizedRendererPartProvider))]
-    public class AlertRendererProvider : IDfmCustomizedRendererPartProvider
+    public class MimoMarkdownProvider : IDfmCustomizedRendererPartProvider
     {
         public IEnumerable<IDfmCustomizedRendererPart> CreateParts(IReadOnlyDictionary<string, object> parameters)
         {

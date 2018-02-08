@@ -1,10 +1,11 @@
 ﻿using Microsoft.DocAsCode.Dfm;
 using System.Collections.Generic;
 using System.Composition;
-namespace JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+
+namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     [Export(typeof(IDfmEngineCustomizer))]
-    public class AlertEngineCustomizer : IDfmEngineCustomizer
+    public class MimoEngineCustomizer : IDfmEngineCustomizer
     {
         public void Customize(DfmEngineBuilder builder, IReadOnlyDictionary<string, object> parameters)
         {

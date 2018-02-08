@@ -1,11 +1,11 @@
 ﻿using Microsoft.DocAsCode.Dfm;
 using Microsoft.DocAsCode.MarkdownLite;
 
-namespace JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class AlertRenderer : DfmCustomizedRendererPartBase<IMarkdownRenderer, MarkdownBlockquoteBlockToken, MarkdownBlockContext>
     {
-        public override string Name => "BlockquoteRenderer";
+        public override string Name => "AlertRenderer";
 
         public override bool Match(IMarkdownRenderer renderer, MarkdownBlockquoteBlockToken blockToken, MarkdownBlockContext context)
         {

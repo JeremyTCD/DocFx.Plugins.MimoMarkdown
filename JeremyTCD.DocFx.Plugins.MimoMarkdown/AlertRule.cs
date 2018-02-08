@@ -1,7 +1,7 @@
 ﻿using Microsoft.DocAsCode.MarkdownLite;
 using System.Text.RegularExpressions;
 
-namespace JeremyTCD.DocFx.Plugins.BlockquoteRenderer
+namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class AlertRule : IMarkdownRule
     {
