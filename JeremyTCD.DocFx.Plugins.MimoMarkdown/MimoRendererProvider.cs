@@ -10,6 +10,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         public IEnumerable<IDfmCustomizedRendererPart> CreateParts(IReadOnlyDictionary<string, object> parameters)
         {
             yield return new AlertRenderer();
+            yield return new HeadingRenderer();
+            yield return new CodeBlockRenderer();
         }
     }
 }
