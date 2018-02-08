@@ -23,14 +23,14 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             content += ">\n";
 
             content += "<svg>\n";
-            content += "<use xlink:href=\"";
+            content += "<use xlink:href=\"#";
             switch (alertToken.AlertType)
             {
                 case "alert-note":
-                    content += "#material-design-info";
+                    content += "material-design-info";
                     break;
                 default:
-                    content += "#material-design-warning";
+                    content += "material-design-warning";
                     break;
             }
             content += "\"></use>\n";
