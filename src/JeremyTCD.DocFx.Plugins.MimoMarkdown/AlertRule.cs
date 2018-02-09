@@ -1,4 +1,5 @@
 ﻿using Microsoft.DocAsCode.MarkdownLite;
+using System;
 using System.Text.RegularExpressions;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
@@ -7,7 +8,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     {
         public virtual string Name => "Alert";
 
-        private static readonly Regex _regex = new Regex(@"\[!(alert-(?:note|warning|critical-warning))\]\s*?\n", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex _regex = new Regex(@"\[!(alert-(?:note|warning|critical-warning))\]\s*?\n", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromSeconds(10));
 
         public virtual IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
         {
