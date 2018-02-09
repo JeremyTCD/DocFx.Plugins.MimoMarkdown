@@ -22,6 +22,14 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             content += "\"";
             content += ">\n";
 
+            content += "<div class=\"alert-content\">";
+            for (int i = 1; i < blockToken.Tokens.Length; i++)
+            {
+                IMarkdownToken token = blockToken.Tokens[i];
+                content += renderer.Render(token);
+            }
+            content += "</div>\n";
+
             content += "<svg>\n";
             content += "<use xlink:href=\"#";
             switch (alertToken.AlertType)
@@ -35,14 +43,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
             content += "\"></use>\n";
             content += "</svg>\n";
-
-            content += "<div class=\"alert-content\">";
-            for (int i = 1; i < blockToken.Tokens.Length; i++)
-            {
-                IMarkdownToken token = blockToken.Tokens[i];
-                content += renderer.Render(token);
-            }
-            content += "</div>\n";
 
             content += "</div>\n";
 
