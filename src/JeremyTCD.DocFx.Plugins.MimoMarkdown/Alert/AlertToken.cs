@@ -8,7 +8,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         {
             Rule = rule;
             Context = context;
-            SourceInfo = sourceInfo;
             AlertType = alertType;
             SourceInfo = sourceInfo;
         }
