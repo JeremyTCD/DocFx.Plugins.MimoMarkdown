@@ -10,6 +10,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     {
         public void Customize(DfmEngineBuilder builder, IReadOnlyDictionary<string, object> parameters)
         {
+            builder.BlockRules = builder.BlockRules.Insert(0, new IncludeFileRule());
             builder.BlockRules = builder.BlockRules.Insert(0, new AlertRule());
 
             IMarkdownRule blockquoteRule = builder.BlockRules.Find(r => r is MarkdownBlockquoteBlockRule);
