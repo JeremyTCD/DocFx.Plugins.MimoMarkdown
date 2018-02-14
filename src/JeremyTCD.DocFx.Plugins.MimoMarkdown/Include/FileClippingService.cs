@@ -8,11 +8,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class FileClippingService
     {
-        private TagContentExtractor _tagContentExtractor;
+        private RegionExtractor _regionExtractor;
 
-        public FileClippingService(TagContentExtractor tagContentExtractor)
+        public FileClippingService(RegionExtractor regionExtractor)
         {
-            _tagContentExtractor = tagContentExtractor;
+            _regionExtractor = regionExtractor;
         }
 
         public void AppendRegions(StringBuilder result, IncludeFileToken token, string fileContent)
@@ -20,7 +20,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            _tagContentExtractor.AppendRegions(result, token, fileLines);
+            _regionExtractor.AppendRegions(result, token, fileLines);
         }
 
         public void AppendRanges(StringBuilder result, IncludeFileToken token, string fileContent)

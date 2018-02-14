@@ -9,7 +9,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     /// <summary>
     /// Loosely based on - TagNameBlockPathQueryOption.cs.
     /// </summary>
-    public class TagContentExtractorFactory
+    public class RegionExtractorFactory
     {
         // C family code snippet comment block: // <[/]snippetname>
         private static readonly Regex CFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\/{2}\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -54,7 +54,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         private IDictionary<string, List<ICodeSnippetExtractor>> _languageExtractorsMap = new Dictionary<string, List<ICodeSnippetExtractor>>();
         private IDictionary<string, List<string>> _languageAliasesMap = new Dictionary<string, List<string>>();
 
-        public TagContentExtractor BuildTagExtractor()
+        public RegionExtractor BuildRegionExtractor()
         {
             // Extractors
             AddExtractor(
@@ -128,7 +128,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             AddAliases("xml", "xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl");
             AddAliases("vb", "vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba");
 
-            return new TagContentExtractor(CreateKeyExtractorsMap());
+            return new RegionExtractor(CreateKeyExtractorsMap());
         }
 
         private Dictionary<string, List<ICodeSnippetExtractor>> CreateKeyExtractorsMap()

@@ -9,12 +9,12 @@ using System.Text;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public class TagContentExtractor
+    public class RegionExtractor
     {
         private IDictionary<string, List<ICodeSnippetExtractor>> _keyExtractorsMap;
         private ConcurrentDictionary<string, Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>> _cache = new ConcurrentDictionary<string, Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>>();
 
-        public TagContentExtractor(IDictionary<string, List<ICodeSnippetExtractor>> keyExtractors)
+        public RegionExtractor(IDictionary<string, List<ICodeSnippetExtractor>> keyExtractors)
         {
             _keyExtractorsMap = keyExtractors;
         }
