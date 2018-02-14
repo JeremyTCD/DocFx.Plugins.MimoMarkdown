@@ -1,26 +1,35 @@
 ﻿using Microsoft.DocAsCode.Common;
 using Microsoft.DocAsCode.MarkdownLite;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class FileRetrievalService
     {
-        // TODO would be great if this could be async
+        // https://andrewlock.net/making-getoradd-on-concurrentdictionary-thread-safe-using-lazy/
+        private ConcurrentDictionary<string, Lazy<string>> _cache = new ConcurrentDictionary<string, Lazy<string>>();
+
         public string GetFile(IncludeFileToken token, MarkdownBlockContext context)
         {
-            // TODO is there some way to get line nubmer?
             string src = token.Options.Src;
+
+            return _cache.
+                GetOrAdd(src, new Lazy<string>(() => GetFileCore(src, token, context))).
+                Value;
+        }
+
+        // TODO would be great if this could be async
+        private string GetFileCore(string src, IncludeFileToken token, MarkdownBlockContext context)
+        {
             string currentFile = (context.Variables["FilePathStack"] as ImmutableStack<string>).Peek();
 
             // Remote
             bool isUrl = Uri.TryCreate(src, UriKind.Absolute, out Uri uriResult) && (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps);
-
             if (isUrl)
             {
                 using (var client = new WebClient())
