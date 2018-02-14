@@ -21,12 +21,13 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public void AppendRegions(StringBuilder result, IncludeFileToken token, string[] fileLines)
         {
-            string key = token.Options.CodeOptions.Language;
+            string key = token.Options.CodeOptions?.Language;
             if (string.IsNullOrEmpty(key))
             {
                 try
                 {
-                    key = Path.GetExtension(token.SourceInfo.File);
+                    // TODO remote sources
+                    key = Path.GetExtension(token.Options.Src);
                 }
                 catch (Exception exception)
                 {
@@ -43,7 +44,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
 
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = _cache.
-                GetOrAdd(token.SourceInfo.File, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(token.SourceInfo.File, keyExtractors, fileLines))).
+                GetOrAdd(token.Options.Src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(keyExtractors, fileLines))).
                 Value;
 
             foreach (Tag tag in token.Options.Tags)
@@ -104,7 +105,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
         }
 
-        private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(string fileName, List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
+        private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
         {
             // GetAll retrieves all tags, not all will be used, so don't throw here if a tag name has multiple corresponding results or if there are
             // resolve errors.

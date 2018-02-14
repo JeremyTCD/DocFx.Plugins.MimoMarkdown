@@ -65,7 +65,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 "actionscript", "arduino", "assembly", "cpp", "csharp", "cshtml", "cuda", "d", "fsharp", "go", "java", "javascript", "pascal", "php", "processing", "rust", "scala", "smalltalk", "swift", "typescript");
             AddExtractor(
                 new FlatNameCodeSnippetExtractor(MarkupLanguageFamilyCodeSnippetCommentStartLineRegex, MarkupLanguageFamilyCodeSnippetCommentEndLineRegex),
-                "xml", "xaml", "html", "cshtml", "vbhtml");
+                "xml", "xaml", "html", "cshtml", "vbhtml", "markdown");
             AddExtractor(
                 new FlatNameCodeSnippetExtractor(SqlFamilyCodeSnippetCommentStartLineRegex, SqlFamilyCodeSnippetCommentEndLineRegex),
                 "haskell", "lua", "sql");
@@ -102,6 +102,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             AddAliases("go", "golang", ".go");
             AddAliases("haskell", ".hs");
             AddAliases("html", ".html", ".jsp", ".asp", ".aspx", ".ascx");
+            AddAliases("markdown", ".md");
             AddAliases("cshtml", ".cshtml", "aspx-cs", "aspx-csharp");
             AddAliases("vbhtml", ".vbhtml", "aspx-vb");
             AddAliases("java", ".java");
