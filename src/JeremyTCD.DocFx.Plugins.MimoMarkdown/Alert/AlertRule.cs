@@ -8,7 +8,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     {
         public virtual string Name => "Alert";
 
-        private static readonly Regex _regex = new Regex(@" *\[!(alert-(?:note|warning|critical-warning))\] *?\n", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromSeconds(10));
+        private static readonly Regex _regex = new Regex(@"^\s*\[!(alert-(?:note|warning|critical-warning))\] *?\n", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromSeconds(10));
 
         public virtual IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
         {

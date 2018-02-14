@@ -12,7 +12,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#balancing-group-definitions
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/alternation-constructs-in-regular-expressions#conditional-matching-with-an-expression
-        private static readonly Regex _regex = new Regex(@"^ *\[!include-file\] *({([^{}]|(?<level>{)|(?<-level>}))*(?(level)(?!))})\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline, TimeSpan.FromSeconds(10));
+        private static readonly Regex _regex = new Regex(@"^\s*\[!include-file\] *({([^{}]|(?<level>{)|(?<-level>}))*(?(level)(?!))})\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline, TimeSpan.FromSeconds(10));
 
         public virtual IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
         {
