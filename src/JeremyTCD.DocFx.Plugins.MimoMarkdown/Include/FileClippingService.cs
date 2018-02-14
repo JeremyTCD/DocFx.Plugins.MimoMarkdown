@@ -41,7 +41,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
         }
 
-        public void AppendRange(StringBuilder result, Range range, string[] lines)
+        public void AppendRange(StringBuilder result, Range range, string[] fileLines)
         {
             bool autoDedent = range.DedentLength < 0;
             List<string> linesForRange = new List<string>(range.End - range.Start + 1);
@@ -50,14 +50,14 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 if (autoDedent)
                 {
                     // Assume that all lines either begin with spaces or tabs
-                    int numSpaces = lines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
+                    int numSpaces = fileLines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
                     range.DedentLength = numSpaces < range.DedentLength || range.DedentLength < 0 ? numSpaces : range.DedentLength;
                 }
 
-                linesForRange.Add(lines[i]);
+                linesForRange.Add(fileLines[i]);
             }
 
-            foreach (string line in lines)
+            foreach (string line in linesForRange)
             {
                 // remove whitespace from start of line
                 result.AppendLine(line.Substring(range.DedentLength));
