@@ -1,6 +1,7 @@
 ﻿using Microsoft.DocAsCode.Common;
 using Microsoft.DocAsCode.Dfm;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     public class TagContentExtractor
     {
         private IDictionary<string, List<ICodeSnippetExtractor>> _keyExtractorsMap;
+        private ConcurrentDictionary<string, Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>> _cache = new ConcurrentDictionary<string, Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>>();
 
         public TagContentExtractor(IDictionary<string, List<ICodeSnippetExtractor>> keyExtractors)
         {
@@ -40,7 +42,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 throw new InvalidOperationException();
             }
 
-            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = GetTagResolveResultsForFile(token.SourceInfo.File, keyExtractors, fileLines);
+            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = _cache.
+                GetOrAdd(token.SourceInfo.File, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(token.SourceInfo.File, keyExtractors, fileLines))).
+                Value;
 
             foreach (Tag tag in token.Options.Tags)
             {
@@ -102,8 +106,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(string fileName, List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
         {
-            // TODO cache for each file
-
             // GetAll retrieves all tags, not all will be used, so don't throw here if a tag name has multiple corresponding results or if there are
             // resolve errors.
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = new Dictionary<string, List<DfmTagNameResolveResult>>();
