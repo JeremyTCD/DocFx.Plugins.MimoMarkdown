@@ -3,6 +3,7 @@ using Microsoft.DocAsCode.Dfm;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
@@ -77,9 +78,25 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 throw new InvalidOperationException();
             }
 
+            bool autoDedent = tag.DedentLength < 0;
+            List<string> linesForRegion = new List<string>(resolveResult.EndLine - resolveResult.StartLine + 1);
             for (int i = resolveResult.StartLine - 1; i < resolveResult.EndLine; i++)
             {
-                result.AppendLine(fileLines[i]);
+                if (autoDedent)
+                {
+                    // Assume that all lines either begin with spaces or tabs
+                    int numSpaces = fileLines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
+                    tag.DedentLength = numSpaces < tag.DedentLength || tag.DedentLength < 0 ? numSpaces : tag.DedentLength;
+                }
+
+                linesForRegion.Add(fileLines[i]);
+            }
+
+
+            foreach (string line in linesForRegion)
+            {
+                // remove whitespace from start of line
+                result.AppendLine(line.Substring(tag.DedentLength));
             }
         }
 
