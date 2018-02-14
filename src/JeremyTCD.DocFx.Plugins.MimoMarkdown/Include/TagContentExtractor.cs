@@ -16,7 +16,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _keyExtractorsMap = keyExtractors;
         }
 
-        public void AppendTagContents(StringBuilder result, IncludeFileToken token, string[] fileLines)
+        public void AppendRegions(StringBuilder result, IncludeFileToken token, string[] fileLines)
         {
             string key = token.Options.CodeOptions.Language;
             if (string.IsNullOrEmpty(key))
@@ -41,18 +41,30 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = GetTagResolveResultsForFile(token.SourceInfo.File, keyExtractors, fileLines);
 
-            // Tag name does not exist
-            if (!resolveResultsMap.TryGetValue(token.Options.Tag, out List<DfmTagNameResolveResult> resolveResults) &&
-                !resolveResultsMap.TryGetValue($"snippet{token.Options.Tag}", out resolveResults))
+            foreach (Tag tag in token.Options.Tags)
             {
-                Logger.LogError($"{token.Options.Tag} does not exist.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                AppendRegion(result, resolveResultsMap, tag, token, fileLines);
+            }
+        }
+
+        private void AppendRegion(StringBuilder result, 
+            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap, 
+            Tag tag, 
+            IncludeFileToken token,
+            string[] fileLines)
+        {
+            // Tag name does not exist
+            if (!resolveResultsMap.TryGetValue(tag.Name, out List<DfmTagNameResolveResult> resolveResults) &&
+                !resolveResultsMap.TryGetValue($"snippet{tag.Name}", out resolveResults))
+            {
+                Logger.LogError($"{tag.Name} does not exist.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
             // Same tag name used multiple times
             if (resolveResults.Count > 1)
             {
-                Logger.LogError($"Multiple occurences of {token.Options.Tag}.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"Multiple occurences of {tag.Name}.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
@@ -61,7 +73,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             // Resolve error
             if (!string.IsNullOrEmpty(resolveResult.ErrorMessage))
             {
-                Logger.LogError($"Error retrieving content for tag \"{token.Options.Tag}\": {resolveResult.ErrorMessage}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"Error retrieving content for tag \"{tag.Name}\": {resolveResult.ErrorMessage}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
@@ -71,11 +83,12 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
         }
 
-        public Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(string fileName, List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
+        private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(string fileName, List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
         {
             // TODO cache for each file
 
-            // GetAll retrieves all tags, not all will be used, so don't throw here if a tag name has multiple corresponding results
+            // GetAll retrieves all tags, not all will be used, so don't throw here if a tag name has multiple corresponding results or if there are
+            // resolve errors.
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = new Dictionary<string, List<DfmTagNameResolveResult>>();
 
             foreach (ICodeSnippetExtractor keyExtractor in keyExtractors)

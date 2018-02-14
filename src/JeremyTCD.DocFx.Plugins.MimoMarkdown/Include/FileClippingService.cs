@@ -15,14 +15,12 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _tagContentExtractor = tagContentExtractor;
         }
 
-        public string AppendTagContents(StringBuilder result, IncludeFileToken token, string fileContent)
+        public void AppendRegions(StringBuilder result, IncludeFileToken token, string fileContent)
         {
             // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            _tagContentExtractor.AppendTagContents(result, token, fileLines);
-
-            return null;
+            _tagContentExtractor.AppendRegions(result, token, fileLines);
         }
 
         public void AppendRanges(StringBuilder result, IncludeFileToken token, string fileContent)
@@ -45,7 +43,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public void AppendRange(StringBuilder result, Range range, string[] lines)
         {
-            bool autoDedent = range.Dedent < 0;
+            bool autoDedent = range.DedentLength < 0;
             List<string> linesForRange = new List<string>(range.End - range.Start + 1);
             for (int i = range.Start - 1; i < range.End; i++)
             {
@@ -53,16 +51,16 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 {
                     // Assume that all lines either begin with spaces or tabs
                     int numSpaces = lines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
-                    range.Dedent = numSpaces < range.Dedent || range.Dedent < 0 ? numSpaces : range.Dedent;
+                    range.DedentLength = numSpaces < range.DedentLength || range.DedentLength < 0 ? numSpaces : range.DedentLength;
                 }
 
                 linesForRange.Add(lines[i]);
             }
 
-            foreach(string line in linesForRange)
+            foreach (string line in lines)
             {
                 // remove whitespace from start of line
-                result.AppendLine(line.Substring(range.Dedent));
+                result.AppendLine(line.Substring(range.DedentLength));
             }
         }
 

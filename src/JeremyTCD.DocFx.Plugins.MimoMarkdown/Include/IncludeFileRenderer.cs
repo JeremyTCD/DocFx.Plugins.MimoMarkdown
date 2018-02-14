@@ -38,9 +38,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
 
             // Render content
-            if(!string.IsNullOrEmpty(token.Options.Tag))
+            if(token.Options.Tags != null && token.Options.Tags.Any())
             {
-                _fileClippingService.AppendTagContents(result, token, fileContent);
+                _fileClippingService.AppendRegions(result, token, fileContent);
             }
             else if(token.Options.Ranges != null && token.Options.Ranges.Any())
             {

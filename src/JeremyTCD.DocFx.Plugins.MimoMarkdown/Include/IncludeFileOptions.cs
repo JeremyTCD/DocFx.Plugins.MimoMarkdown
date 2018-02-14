@@ -10,7 +10,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public List<Range> Ranges { get; set; } = null;
 
-        public string Tag { get; set; } = null;
+        public List<Tag> Tags { get; set; } = null;
 
         public bool IsCode { get; set; } = false;
 
