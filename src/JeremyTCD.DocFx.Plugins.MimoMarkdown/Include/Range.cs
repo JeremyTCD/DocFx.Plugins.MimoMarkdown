@@ -10,6 +10,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         [JsonProperty(Required = Required.Always)]
         public int End { get; set; }
 
-        public int Dedent { get; set; } = -1;
+        public int DedentLength { get; set; } = -1;
     }
 }
