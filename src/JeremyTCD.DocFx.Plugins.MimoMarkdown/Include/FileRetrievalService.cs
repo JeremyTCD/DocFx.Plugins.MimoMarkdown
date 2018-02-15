@@ -26,8 +26,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         // TODO would be great if this could be async
         private string GetFileCore(string src, IncludeFileToken token, MarkdownBlockContext context)
         {
-            string currentFile = (context.Variables["FilePathStack"] as ImmutableStack<string>).Peek();
-
             // Remote
             bool isUrl = Uri.TryCreate(src, UriKind.Absolute, out Uri uriResult) && (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps);
             if (isUrl)
@@ -56,8 +54,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
             // Assume src is a valid relative path
             string root = (context.Variables["BaseFolder"] as string);
-            // TODO is it safe to assume that current file is always valid?
-            string currentDirectory = Directory.GetParent(Path.Combine(root, currentFile)).FullName;
+            string currentDirectory = Directory.GetParent(Path.Combine(root, token.SourceInfo.File)).FullName;
             string file = Path.Combine(currentDirectory, src);
             try
             {
