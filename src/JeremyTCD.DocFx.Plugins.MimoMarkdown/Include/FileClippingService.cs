@@ -15,16 +15,18 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _regionExtractor = regionExtractor;
         }
 
-        public void AppendRegions(StringBuilder result, IncludeFileToken token, string fileContent)
+        public string GetRegions(IncludeFileToken token, string fileContent)
         {
             // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            _regionExtractor.AppendRegions(result, token, fileLines);
+            return _regionExtractor.GetRegions(token, fileLines);
         }
 
-        public void AppendRanges(StringBuilder result, IncludeFileToken token, string fileContent)
+        public string GetRanges(IncludeFileToken token, string fileContent)
         {
+            StringBuilder result = new StringBuilder();
+
             // Split 
             string[] fileLines = GetFileLines(fileContent);
 
@@ -39,9 +41,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
                 AppendRange(result, range, fileLines);
             }
+
+            return result.ToString();
         }
 
-        public void AppendRange(StringBuilder result, Range range, string[] fileLines)
+        private void AppendRange(StringBuilder result, Range range, string[] fileLines)
         {
             bool autoDedent = range.DedentLength < 0;
             List<string> linesForRange = new List<string>(range.End - range.Start + 1);

@@ -19,8 +19,10 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _keyExtractorsMap = keyExtractors;
         }
 
-        public void AppendRegions(StringBuilder result, IncludeFileToken token, string[] fileLines)
+        public string GetRegions(IncludeFileToken token, string[] fileLines)
         {
+            StringBuilder result = new StringBuilder();
+
             string key = token.Options.CodeOptions?.Language;
             if (string.IsNullOrEmpty(key))
             {
@@ -51,6 +53,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             {
                 AppendRegion(result, resolveResultsMap, tag, token, fileLines);
             }
+
+            return result.ToString();
         }
 
         private void AppendRegion(StringBuilder result, 
