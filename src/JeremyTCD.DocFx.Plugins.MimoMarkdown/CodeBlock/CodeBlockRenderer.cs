@@ -1,13 +1,19 @@
 ﻿using Microsoft.DocAsCode.Dfm;
 using Microsoft.DocAsCode.MarkdownLite;
+using System.Text;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class CodeBlockRenderer : DfmCustomizedRendererPartBase<IMarkdownRenderer, MarkdownCodeBlockToken, MarkdownBlockContext>
     {
-        private int _codeBlockNum = 0;
+        private readonly CodeBlockRenderingService _codeBlockRenderingService;
 
-        public override string Name => "AlertRenderer";
+        public override string Name => "CodeBlockRenderer";
+
+        public CodeBlockRenderer(CodeBlockRenderingService codeBlockRenderingService)
+        {
+            _codeBlockRenderingService = codeBlockRenderingService;
+        }
 
         public override bool Match(IMarkdownRenderer renderer, MarkdownCodeBlockToken token, MarkdownBlockContext context)
         {
@@ -16,49 +22,18 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public override StringBuffer Render(IMarkdownRenderer renderer, MarkdownCodeBlockToken token, MarkdownBlockContext context)
         {
-            // TODO how is name handled?
-            // TODO check why highlighting does not work
-            // The above two issues are handled by DfmCodeRenderer, a different renderer for code from external sources.
-            // Eventually, all code rendering should be handled by a custom token that allows for
-            //  - title
-            //  - source
-            //  - language (for highlighting, also converted to display language)
+            StringBuilder result = new StringBuilder();
 
-            string codeID = $"code-block-{_codeBlockNum++}";
-            bool escaped = false;
-            string code = token.Code;
-            if (renderer.Options.Highlight != null)
-            {
-                var highlightCode = renderer.Options.Highlight(code, token.Lang);
-                if (highlightCode != null && highlightCode != code)
-                {
-                    escaped = true;
-                    code = highlightCode;
-                }
-            }
+            _codeBlockRenderingService.
+                AppendCodeBlock(result,
+                    token.SourceInfo.File,
+                    StringHelper.Escape(token.Code, true),
+                    false,
+                    true,
+                    token.Lang,
+                    renderer.Options.LangPrefix);
 
-            StringBuffer result = "<div class=\"code-block\">\n";
-            // No unecessary white space within pre element
-            result = result + "<pre>";
-            result += $"<code id=\"{codeID}\"";
-            if (!string.IsNullOrEmpty(token.Lang))
-            {
-                result = result + " class=\"" + renderer.Options.LangPrefix + StringHelper.Escape(token.Lang, true) + "\"";
-            }
-            result += ">";
-            result += (escaped ? code : StringHelper.Escape(code, true));
-            result += "</code>";
-            result += "</pre>\n";
-            // Firefox does not support hover events for svgs within button elements, so use a div and assign 'button' to its role attribute
-            // data-clipboard-target used by clipboard.js. title used by tippy.js
-            result += $"<div data-clipboard-target=\"#{codeID}\" role=\"button\" title=\"Code copied\">\n"; 
-            result += "<svg>\n";
-            result += "<use xlink:href=\"#material-design-copy\"></use>\n";
-            result += "</svg>\n";
-            result += "</div>\n"; // button
-            result += "</div>\n"; // code block
-
-            return result;
+            return result.ToString();
         }
     }
 }

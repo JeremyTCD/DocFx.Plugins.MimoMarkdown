@@ -10,15 +10,17 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class IncludeFileRenderer : DfmCustomizedRendererPartBase<IMarkdownRenderer, IncludeFileToken, MarkdownBlockContext>
     {
-        private int _externalCodeBlockNum = 0;
-
         private readonly FileRetrievalService _fileRetrievalService;
         private readonly FileClippingService _fileClippingService;
+        private readonly CodeBlockRenderingService _codeBlockRenderingService;
 
-        public IncludeFileRenderer(FileRetrievalService fileRetrievalService, FileClippingService fileClippingService)
+        public IncludeFileRenderer(FileRetrievalService fileRetrievalService, 
+            FileClippingService fileClippingService,
+            CodeBlockRenderingService codeBlockRenderingService)
         {
             _fileRetrievalService = fileRetrievalService;
             _fileClippingService = fileClippingService;
+            _codeBlockRenderingService = codeBlockRenderingService;
         }
 
         public override string Name => throw new System.NotImplementedException();
@@ -52,9 +54,17 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             // Code block, append content as is
             if (codeBlock)
             {
-                AppendCodeBlockOpeningTags(result, renderer, token);
-                result.Append(content);
-                AppendCodeBlockClosingTags(result, renderer, token);
+                CodeOptions codeOptions = token.Options.CodeOptions ?? new CodeOptions();
+
+                _codeBlockRenderingService.
+                    AppendCodeBlock(
+                        result,
+                        token.SourceInfo.File,
+                        content,
+                        codeOptions.ShowLineNumbers,
+                        codeOptions.Highlight,
+                        codeOptions.Language,
+                        renderer.Options.LangPrefix);
             }
             else
             {
@@ -101,7 +111,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                     TokenAggregators = currentEngine.TokenAggregators
                 };
 
-                string markup = newEngine.Markup(content, context);
+                // By setting context to include, the engine will remove any yaml header
+                string markup = newEngine.Markup(content, context.SetIsInclude());
 
                 // Fix relative hrefs
                 if (srcIsRelative)
@@ -145,38 +156,6 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 }
             }
             return rootNode.WriteTo();
-        }
-
-        private void AppendCodeBlockOpeningTags(StringBuilder result, IMarkdownRenderer renderer, IncludeFileToken token)
-        {
-            CodeOptions codeOptions = token.Options.CodeOptions ?? new CodeOptions();
-
-            // TODO ShowLanguage, Title
-
-            result.Append($"<div class=\"code-block{(codeOptions.ShowLineNumbers ? " show-line-numbers" : "")}\">\n");
-            // No unecessary white space within pre element
-            result.Append("<pre>");
-            result.Append($"<code id=\"external-code-block-{_externalCodeBlockNum}\"");
-
-            if (!string.IsNullOrEmpty(codeOptions.Language) && codeOptions.Highlight)
-            {
-                result.Append(" class=\"" + renderer.Options.LangPrefix + StringHelper.Escape(codeOptions.Language, true) + "\"");
-            }
-            result.Append(">");
-        }
-
-        private void AppendCodeBlockClosingTags(StringBuilder result, IMarkdownRenderer renderer, IncludeFileToken token)
-        {
-            result.Append("</code>");
-            result.Append("</pre>\n");
-            // Firefox does not support hover events for svgs within button elements, so use a div and assign 'button' to its role attribute
-            // data-clipboard-target used by clipboard.js. title used by tippy.js
-            result.Append($"<div data-clipboard-target=\"#external-code-block-{_externalCodeBlockNum}\" role=\"button\" title=\"Code copied\">\n");
-            result.Append("<svg>\n");
-            result.Append("<use xlink:href=\"#material-design-copy\"></use>\n");
-            result.Append("</svg>\n");
-            result.Append("</div>\n"); // button
-            result.Append("</div>\n"); // code block
         }
     }
 }
