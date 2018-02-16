@@ -2,10 +2,9 @@
 using Microsoft.DocAsCode.MarkdownLite;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.IO;
-using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
@@ -13,6 +12,13 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     {
         // https://andrewlock.net/making-getoradd-on-concurrentdictionary-thread-safe-using-lazy/
         private ConcurrentDictionary<string, Lazy<string>> _cache = new ConcurrentDictionary<string, Lazy<string>>();
+
+        private HttpClient _httpClient;
+
+        public FileRetrievalService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
         public string GetFile(IncludeFileToken token, MarkdownBlockContext context)
         {
@@ -23,19 +29,36 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 Value;
         }
 
-        // TODO would be great if this could be async
+        // TODO would be great if this could be async, but methods down the stack are not async
         private string GetFileCore(string src, IncludeFileToken token, MarkdownBlockContext context)
         {
             // Remote
             bool isUrl = Uri.TryCreate(src, UriKind.Absolute, out Uri uriResult) && (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps);
             if (isUrl)
             {
-                using (var client = new WebClient())
+                int remainingTries = 3;
+
+                do
                 {
+                    remainingTries--;
+
                     try
                     {
-                        byte[] data = client.DownloadData(uriResult);
-                        return Encoding.UTF8.GetString(data);
+                        HttpResponseMessage response = _httpClient.GetAsync(uriResult).Result;
+                        return response.Content.ReadAsStringAsync().Result;
+                    }
+                    catch(TaskCanceledException taskCanceledException)
+                    {
+                        if (remainingTries > 0)
+                        {
+                            Logger.LogWarning($"Request to \"{src}\" timed out: {taskCanceledException.Message}, {remainingTries} attempts remaining.");
+                        }
+                        else
+                        {
+                            Logger.LogError($"Multiple attempts to get data from \"{src}\" have failed, please ensure that the url is valid and that your network connection is stable.", 
+                                file: token.SourceInfo.File, line: token.SourceInfo.LineNumber.ToString());
+                            throw;
+                        }
                     }
                     catch (Exception exception)
                     {
@@ -43,6 +66,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                         throw;
                     }
                 }
+                while (remainingTries > 0);
             }
 
             // Local
