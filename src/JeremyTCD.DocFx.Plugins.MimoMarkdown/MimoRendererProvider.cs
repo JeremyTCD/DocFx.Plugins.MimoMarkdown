@@ -24,6 +24,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             yield return new IncludeFileRenderer(new FileRetrievalService(httpClient), 
                 new FileClippingService(regionExtractor), 
                 codeBlockRenderingService);
+            yield return new IncludeImageRenderer();
         }
     }
 }

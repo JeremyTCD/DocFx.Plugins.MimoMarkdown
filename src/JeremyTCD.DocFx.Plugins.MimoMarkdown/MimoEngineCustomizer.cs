@@ -12,6 +12,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         {
             builder.BlockRules = builder.BlockRules.Insert(0, new IncludeFileRule());
             builder.BlockRules = builder.BlockRules.Insert(0, new AlertRule());
+            builder.BlockRules = builder.BlockRules.Insert(0, new IncludeImageRule());
 
             IMarkdownRule blockquoteRule = builder.BlockRules.Find(r => r is MarkdownBlockquoteBlockRule);
             builder.BlockRules = builder.BlockRules.Replace(blockquoteRule, new CustomMarkdownBlockquoteBlockRule());
