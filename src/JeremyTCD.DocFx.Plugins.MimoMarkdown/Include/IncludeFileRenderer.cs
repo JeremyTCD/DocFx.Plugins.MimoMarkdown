@@ -23,7 +23,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _codeBlockRenderingService = codeBlockRenderingService;
         }
 
-        public override string Name => throw new System.NotImplementedException();
+        public override string Name => nameof(IncludeFileRenderer);
 
         public override bool Match(IMarkdownRenderer renderer, IncludeFileToken token, MarkdownBlockContext context)
         {

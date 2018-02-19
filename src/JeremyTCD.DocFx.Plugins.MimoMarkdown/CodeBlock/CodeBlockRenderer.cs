@@ -8,7 +8,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     {
         private readonly CodeBlockRenderingService _codeBlockRenderingService;
 
-        public override string Name => "CodeBlockRenderer";
+        public override string Name => nameof(CodeBlockRenderer);
 
         public CodeBlockRenderer(CodeBlockRenderingService codeBlockRenderingService)
         {

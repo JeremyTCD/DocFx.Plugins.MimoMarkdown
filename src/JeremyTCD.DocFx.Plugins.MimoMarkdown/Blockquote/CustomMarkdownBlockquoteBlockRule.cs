@@ -11,7 +11,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     /// </summary>
     public class CustomMarkdownBlockquoteBlockRule : IMarkdownRule
     {
-        public virtual string Name => "CustomBlockquote";
+        public virtual string Name => nameof(CustomMarkdownBlockquoteBlockRule);
 
         public virtual Regex Blockquote => new Regex(@"^( *>[^\n]+(\n(?! *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +[""(]([^\n]+)["")])? *(?:\n+|$))[^\n]+)*\n)+\n*", RegexOptions.Compiled, TimeSpan.FromSeconds(10));
 

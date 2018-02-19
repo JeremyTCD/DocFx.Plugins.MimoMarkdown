@@ -6,7 +6,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class AlertRule : IMarkdownRule
     {
-        public virtual string Name => "Alert";
+        public virtual string Name => nameof(AlertRule);
 
         private static readonly Regex _regex = new Regex(@"^\s*\[!(alert-(?:note|warning|critical-warning))\] *?\n", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromSeconds(10));
 

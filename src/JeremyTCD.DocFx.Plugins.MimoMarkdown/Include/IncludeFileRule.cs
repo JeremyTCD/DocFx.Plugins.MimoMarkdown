@@ -8,7 +8,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class IncludeFileRule : IMarkdownRule
     {
-        public virtual string Name => "IncludeFile";
+        public virtual string Name => nameof(IncludeFileRule);
 
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#balancing-group-definitions
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/alternation-constructs-in-regular-expressions#conditional-matching-with-an-expression

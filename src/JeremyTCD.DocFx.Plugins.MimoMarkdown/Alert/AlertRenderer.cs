@@ -5,7 +5,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     public class AlertRenderer : DfmCustomizedRendererPartBase<IMarkdownRenderer, MarkdownBlockquoteBlockToken, MarkdownBlockContext>
     {
-        public override string Name => "AlertRenderer";
+        public override string Name => nameof(AlertRenderer);
 
         public override bool Match(IMarkdownRenderer renderer, MarkdownBlockquoteBlockToken blockToken, MarkdownBlockContext context)
         {
