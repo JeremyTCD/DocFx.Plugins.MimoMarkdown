@@ -16,7 +16,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         public override StringBuffer Render(IMarkdownRenderer renderer, MarkdownHeadingBlockToken token, MarkdownBlockContext context)
         {
             string level = token.Depth.ToString();
-            StringBuffer result = $"<div class=\"heading-{level}\">\n";
+            StringBuffer result = $"<header class=\"heading-{level}\">\n";
             result += "<div class=\"wrapper\">\n";
             result += $"<h{level} id=\"{renderer.Options.HeaderPrefix}{token.Id}\">\n";
             foreach (var item in token.Content.Tokens)
@@ -30,7 +30,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             result += "</svg>\n";
             result += "</div>\n"; // button
             result += "</div>\n"; // wrapper
-            result += "</div>\n"; // heading
+            result += "</header>\n"; // header
 
             return result;
         }
