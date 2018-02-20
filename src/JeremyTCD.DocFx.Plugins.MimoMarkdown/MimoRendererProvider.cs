@@ -25,6 +25,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 new FileClippingService(regionExtractor), 
                 codeBlockRenderingService);
             yield return new IncludeImageRenderer();
+            yield return new TableBlockRenderer();
         }
     }
 }
