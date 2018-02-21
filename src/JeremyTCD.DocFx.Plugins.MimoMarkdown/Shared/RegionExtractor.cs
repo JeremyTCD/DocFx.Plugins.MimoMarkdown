@@ -1,5 +1,6 @@
 ﻿using Microsoft.DocAsCode.Common;
 using Microsoft.DocAsCode.Dfm;
+using Microsoft.DocAsCode.MarkdownLite;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,17 +20,17 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _keyExtractorsMap = keyExtractors;
         }
 
-        public string GetRegions(IncludeFileToken token, string[] fileLines)
+        public string GetRegions(string langauge, string src, List<Tag> tags, IMarkdownToken token, string[] fileLines)
         {
             StringBuilder result = new StringBuilder();
 
-            string key = token.Options.CodeOptions?.Language;
+            string key = langauge;
             if (string.IsNullOrEmpty(key))
             {
                 try
                 {
                     // TODO remote sources
-                    key = Path.GetExtension(token.Options.Src);
+                    key = Path.GetExtension(src);
                 }
                 catch (Exception exception)
                 {
@@ -46,10 +47,10 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
 
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = _cache.
-                GetOrAdd(token.Options.Src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(keyExtractors, fileLines))).
+                GetOrAdd(src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(keyExtractors, fileLines))).
                 Value;
 
-            foreach (Tag tag in token.Options.Tags)
+            foreach (Tag tag in tags)
             {
                 AppendRegion(result, resolveResultsMap, tag, token, fileLines);
             }
@@ -60,7 +61,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         private void AppendRegion(StringBuilder result, 
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap, 
             Tag tag, 
-            IncludeFileToken token,
+            IMarkdownToken token,
             string[] fileLines)
         {
             // Tag name does not exist

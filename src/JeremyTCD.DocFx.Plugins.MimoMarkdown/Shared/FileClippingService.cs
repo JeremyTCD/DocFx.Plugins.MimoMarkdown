@@ -1,4 +1,5 @@
 ﻿using Microsoft.DocAsCode.Common;
+using Microsoft.DocAsCode.MarkdownLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,22 +16,22 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _regionExtractor = regionExtractor;
         }
 
-        public string GetRegions(IncludeFileToken token, string fileContent)
+        public string GetRegions(string language, string src, List<Tag> tags, string fileContent, IMarkdownToken token)
         {
             // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            return _regionExtractor.GetRegions(token, fileLines);
+            return _regionExtractor.GetRegions(language, src, tags, token, fileLines);
         }
 
-        public string GetRanges(IncludeFileToken token, string fileContent)
+        public string GetRanges(List<Range> ranges, string fileContent, IMarkdownToken token)
         {
             StringBuilder result = new StringBuilder();
 
             // Split 
             string[] fileLines = GetFileLines(fileContent);
 
-            foreach (Range range in token.Options.Ranges)
+            foreach (Range range in ranges)
             {
                 if (range.Start - 1 < 0 || range.End > fileLines.Length
                     || range.End < range.Start)

@@ -20,8 +20,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         private static readonly Regex BasicFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\'\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Markup language family code snippet block: <!-- <[/]snippetname> -->
-        private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*(?<name>[\w\.]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Sql family code snippet block: -- <[/]snippetname>
         private static readonly Regex SqlFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\-{2}\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -58,8 +58,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         {
             // Extractors
             AddExtractor(
-                    new FlatNameCodeSnippetExtractor(BasicFamilyCodeSnippetCommentStartLineRegex, BasicFamilyCodeSnippetCommentEndLineRegex),
-                    "vb", "vbhtml");
+                new FlatNameCodeSnippetExtractor(BasicFamilyCodeSnippetCommentStartLineRegex, BasicFamilyCodeSnippetCommentEndLineRegex),
+                "vb", "vbhtml");
             AddExtractor(
                 new FlatNameCodeSnippetExtractor(CFamilyCodeSnippetCommentStartLineRegex, CFamilyCodeSnippetCommentEndLineRegex),
                 "actionscript", "arduino", "assembly", "cpp", "csharp", "cshtml", "cuda", "d", "fsharp", "go", "java", "javascript", "pascal", "php", "processing", "rust", "scala", "smalltalk", "swift", "typescript");

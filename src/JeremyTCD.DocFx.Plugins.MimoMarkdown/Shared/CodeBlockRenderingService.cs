@@ -30,7 +30,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             AppendCodeBlockClosingTags(result);
         }
 
-        public void AppendCodeBlockOpeningTags(StringBuilder result, 
+        public void AppendCodeBlockOpeningTags(StringBuilder result,
             string id,
             bool showLineNumbers,
             bool highlight,
@@ -52,13 +52,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             // No unecessary white space within pre element
             result.Append("<pre>");
-            result.Append($"<code id=\"{id}\"");
-
-            if (!string.IsNullOrEmpty(language) && highlight)
-            {
-                result.Append(" class=\"" + languagePrefix + StringHelper.Escape(language, true) + "\"");
-            }
-            result.Append(">");
+            string noHighlight = "no-highlight";
+            string hljsLanguageClass = !string.IsNullOrEmpty(language) && highlight && language != noHighlight ? 
+                languagePrefix + StringHelper.Escape(language, true) : 
+                noHighlight;
+            result.Append($"<code id=\"{id}\" class=\"{hljsLanguageClass}\">");
         }
 
         public void AppendCodeBlockClosingTags(StringBuilder result)

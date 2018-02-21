@@ -2,9 +2,9 @@
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public class IncludeFileToken : IMarkdownToken
+    public class IncludeCodeToken : IMarkdownToken
     {
-        public IncludeFileToken(IMarkdownRule rule, IMarkdownContext context, IncludeFileOptions options, SourceInfo sourceInfo)
+        public IncludeCodeToken(IMarkdownRule rule, IMarkdownContext context, IncludeCodeOptions options, SourceInfo sourceInfo)
         {
             Rule = rule;
             Context = context;
@@ -16,7 +16,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public IMarkdownContext Context { get; }
 
-        public IncludeFileOptions Options { get; }
+        public IncludeCodeOptions Options { get; }
 
         public SourceInfo SourceInfo { get; }
     }

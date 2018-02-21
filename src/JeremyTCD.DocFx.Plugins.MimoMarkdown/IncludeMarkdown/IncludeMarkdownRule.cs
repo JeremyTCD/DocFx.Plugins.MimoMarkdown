@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public class IncludeFileRule : IMarkdownRule
+    public class IncludeMarkdownRule : IMarkdownRule
     {
-        public virtual string Name => nameof(IncludeFileRule);
+        public virtual string Name => nameof(IncludeMarkdownRule);
 
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#balancing-group-definitions
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/alternation-constructs-in-regular-expressions#conditional-matching-with-an-expression
-        private static readonly Regex _regex = new Regex(@"^\s*\[!include-file\] *({([^{}]|(?<level>{)|(?<-level>}))*(?(level)(?!))})\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline, TimeSpan.FromSeconds(10));
+        private static readonly Regex _regex = new Regex(@"^\s*\[!include-markdown\] *({([^{}]|(?<level>{)|(?<-level>}))*(?(level)(?!))})\s*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline, TimeSpan.FromSeconds(10));
 
         public virtual IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
         {
@@ -23,11 +23,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
 
             string rawOptions = match.Groups[1].Value;
-            IncludeFileOptions includeFileOptions = null;
+            IncludeMarkdownOptions includeMarkdownOptions = null;
 
             try
             {
-                 includeFileOptions = JsonConvert.DeserializeObject<IncludeFileOptions>(rawOptions);
+                 includeMarkdownOptions = JsonConvert.DeserializeObject<IncludeMarkdownOptions>(rawOptions);
             }
             catch (JsonException exception)
             {
@@ -37,7 +37,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             SourceInfo sourceInfo = context.Consume(match.Length);
 
-            return new IncludeFileToken(this, parser.Context, includeFileOptions, sourceInfo);
+            return new IncludeMarkdownToken(this, parser.Context, includeMarkdownOptions, sourceInfo);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public class IncludeFileOptions
+    public class IncludeCodeOptions
     {
         [JsonProperty(Required = Required.Always)]
         public string Src { get; set; }
@@ -12,8 +12,12 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public List<Tag> Tags { get; set; } = null;
 
-        public bool IsCode { get; set; } = false;
+        public string Language { get; set; } = null;
 
-        public CodeOptions CodeOptions { get; set; } = null;
+        public bool ShowLineNumbers { get; set; } = false;
+
+        public bool Highlight { get; set; } = true;
+
+        public string Title { get; set; } = null;
     }
 }
