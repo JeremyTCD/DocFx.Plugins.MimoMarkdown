@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
     /// <summary>
-    /// Loosely based on - TagNameBlockPathQueryOption.cs.
+    /// Loosely based on - DocFx's TagNameBlockPathQueryOption.cs.
     /// </summary>
     public class RegionExtractorFactory
     {
