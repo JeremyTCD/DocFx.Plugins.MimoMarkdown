@@ -102,11 +102,20 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 linesForRegion.Add(fileLines[i]);
             }
 
+            if(tag.LineBreak == LineBreakOption.Before || tag.LineBreak == LineBreakOption.Both)
+            {
+                result.Append("\n");
+            }
 
             foreach (string line in linesForRegion)
             {
                 // remove whitespace from start of line
                 result.AppendLine(line.Substring(tag.DedentLength));
+            }
+
+            if (tag.LineBreak == LineBreakOption.After || tag.LineBreak == LineBreakOption.Both)
+            {
+                result.Append("\n");
             }
         }
 
