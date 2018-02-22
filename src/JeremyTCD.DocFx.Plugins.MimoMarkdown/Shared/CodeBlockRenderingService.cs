@@ -28,22 +28,10 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             int num = _codeBlockNums.AddOrUpdate(fileName, 1, (key, codeBlockNum) => ++codeBlockNum);
             blockID = !String.IsNullOrEmpty(blockID) ? blockID : $"code-block-{num}";
             string codeElementID = $"{blockID}-code";
+            string encodedContent = StringHelper.HtmlEncode(content);
 
-            AppendCodeBlockOpeningTags(result, blockID, codeElementID, showLineNumbers, highlight, language, languagePrefix);
-            result.Append(StringHelper.HtmlEncode(content));
-            AppendCodeBlockClosingTags(result);
-        }
-
-        public void AppendCodeBlockOpeningTags(StringBuilder result,
-            string blockID,
-            string codeElementID,
-            bool showLineNumbers,
-            bool highlight,
-            string language,
-            string languagePrefix)
-        {
-            // TODO ShowLanguage, Title
-            result.Append($"<div id=\"{blockID}\" class=\"code-block{(showLineNumbers ? " show-line-numbers" : "")}\">\n");
+            // TODO Title
+            result.Append($"<div id=\"{blockID}\" class=\"code-block\">\n");
 
             result.Append("<header>\n");
             // Firefox does not support hover events for svgs within button elements, so use a div and assign 'button' to its role attribute
@@ -55,20 +43,94 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             result.Append("</div>\n"); // button
             result.Append("</header>\n");
 
+            if (showLineNumbers)
+            {
+                result.Append("<div>\n");
+                AppendLineNumbers(result, encodedContent);
+            }
+
             // No unecessary white space within pre element
-            result.Append("<pre>");
+            result.Append("<pre class=\"code\">");
             string noHighlight = "no-highlight";
-            string hljsLanguageClass = !string.IsNullOrEmpty(language) && highlight && language != noHighlight ? 
-                languagePrefix + StringHelper.Escape(language, true) : 
+            string hljsLanguageClass = !string.IsNullOrEmpty(language) && highlight && language != noHighlight ?
+                languagePrefix + StringHelper.Escape(language, true) :
                 noHighlight;
             result.Append($"<code id=\"{codeElementID}\" class=\"{hljsLanguageClass}\">");
-        }
 
-        public void AppendCodeBlockClosingTags(StringBuilder result)
-        {
+            result.Append(encodedContent);
             result.Append("</code>");
             result.Append("</pre>\n");
+
+            if (showLineNumbers)
+            {
+                result.Append("</div>\n");
+            }
             result.Append("</div>\n"); // code block
+        }
+
+        private void AppendLineNumbers(StringBuilder result, string encodedContent)
+        {
+            int numLines = GetNumLines(encodedContent);
+            int maxNumDigits = GetNumberNumDigits(numLines);
+
+            result.Append("<pre class=\"line-numbers\">");
+            for (int i = 1; i <= numLines; i++)
+            {
+                // Right align
+                int numDigits = GetNumberNumDigits(i);
+                for (int j = 0; j < maxNumDigits - numDigits; j++)
+                {
+                    result.Append(' ');
+                }
+
+                result.Append(i);
+                if (i != numLines)
+                {
+                    result.Append('\n');
+                }
+            }
+            result.Append("</pre>");
+        }
+
+        private int GetNumberNumDigits(int num)
+        {
+            int result = 0;
+
+            do
+            {
+                result++;
+                num /= 10;
+            }
+            while (num != 0);
+
+            return result;
+        }
+
+        private int GetNumLines(string str)
+        {
+            int result = 1;
+
+            for (int i = 0; i < str.Length; i++)
+                switch (str[i])
+                {
+                    case '\r':
+                        {
+                            result++;
+
+                            // \r\n counts as 1 line break
+                            if (i + 1 < str.Length && str[i + 1] == '\n')
+                            {
+                                i++;
+                            }
+
+                            break;
+                        }
+                    case '\n':
+                        result++;
+                        break;
+                }
+
+            return result;
         }
     }
 }
