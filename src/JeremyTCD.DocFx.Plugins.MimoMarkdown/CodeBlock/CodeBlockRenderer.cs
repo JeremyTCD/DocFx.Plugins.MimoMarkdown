@@ -28,6 +28,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 AppendCodeBlock(result,
                     token.SourceInfo.File,
                     StringHelper.Escape(token.Code, true),
+                    null,
                     false,
                     true,
                     token.Lang,

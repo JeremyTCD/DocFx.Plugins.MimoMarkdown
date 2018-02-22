@@ -53,6 +53,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                     result,
                     token.SourceInfo.File,
                     content,
+                    options.BlockID,
                     options.ShowLineNumbers,
                     options.Highlight,
                     options.Language,

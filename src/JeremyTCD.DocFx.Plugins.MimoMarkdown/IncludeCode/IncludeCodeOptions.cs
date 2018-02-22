@@ -19,5 +19,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         public bool Highlight { get; set; } = true;
 
         public string Title { get; set; } = null;
+
+        public string BlockID { get; set; }
     }
 }

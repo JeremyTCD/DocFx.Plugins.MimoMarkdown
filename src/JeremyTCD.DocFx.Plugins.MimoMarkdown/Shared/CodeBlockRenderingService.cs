@@ -1,4 +1,5 @@
 ﻿using Microsoft.DocAsCode.MarkdownLite;
+using System;
 using System.Collections.Concurrent;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         public void AppendCodeBlock(StringBuilder result,
             string fileName,
             string content,
+            string blockID,
             bool showLineNumbers,
             bool highlight,
             string language,
@@ -23,27 +25,30 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         {
             // AddOrUpdate uses an optimistic concurrency model. It grabs the current value, runs the delegate and tries to update the initial value. If the initial value changed while the delegate was running,
             // it runs the delegate again, using the new value - https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/how-to-add-and-remove-items.
-            string id = $"code-block-{_codeBlockNums.AddOrUpdate(fileName, 1, (key, codeBlockNum) => ++codeBlockNum)}";
+            int num = _codeBlockNums.AddOrUpdate(fileName, 1, (key, codeBlockNum) => ++codeBlockNum);
+            blockID = !String.IsNullOrEmpty(blockID) ? blockID : $"code-block-{num}";
+            string codeElementID = $"{blockID}-code";
 
-            AppendCodeBlockOpeningTags(result, id, showLineNumbers, highlight, language, languagePrefix);
+            AppendCodeBlockOpeningTags(result, blockID, codeElementID, showLineNumbers, highlight, language, languagePrefix);
             result.Append(StringHelper.HtmlEncode(content));
             AppendCodeBlockClosingTags(result);
         }
 
         public void AppendCodeBlockOpeningTags(StringBuilder result,
-            string id,
+            string blockID,
+            string codeElementID,
             bool showLineNumbers,
             bool highlight,
             string language,
             string languagePrefix)
         {
             // TODO ShowLanguage, Title
-            result.Append($"<div class=\"code-block{(showLineNumbers ? " show-line-numbers" : "")}\">\n");
+            result.Append($"<div id=\"{blockID}\" class=\"code-block{(showLineNumbers ? " show-line-numbers" : "")}\">\n");
 
             result.Append("<header>\n");
             // Firefox does not support hover events for svgs within button elements, so use a div and assign 'button' to its role attribute
             // data-clipboard-target used by clipboard.js. title used by tippy.js
-            result.Append($"<div data-clipboard-target=\"#{id}\" role=\"button\" title=\"Code copied\">\n");
+            result.Append($"<div data-clipboard-target=\"#{codeElementID}\" role=\"button\" title=\"Code copied\">\n");
             result.Append("<svg>\n");
             result.Append("<use xlink:href=\"#material-design-copy\"></use>\n");
             result.Append("</svg>\n");
@@ -56,7 +61,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             string hljsLanguageClass = !string.IsNullOrEmpty(language) && highlight && language != noHighlight ? 
                 languagePrefix + StringHelper.Escape(language, true) : 
                 noHighlight;
-            result.Append($"<code id=\"{id}\" class=\"{hljsLanguageClass}\">");
+            result.Append($"<code id=\"{codeElementID}\" class=\"{hljsLanguageClass}\">");
         }
 
         public void AppendCodeBlockClosingTags(StringBuilder result)
