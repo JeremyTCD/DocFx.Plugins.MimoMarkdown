@@ -26,7 +26,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             string id = $"code-block-{_codeBlockNums.AddOrUpdate(fileName, 1, (key, codeBlockNum) => ++codeBlockNum)}";
 
             AppendCodeBlockOpeningTags(result, id, showLineNumbers, highlight, language, languagePrefix);
-            result.Append(content);
+            result.Append(StringHelper.HtmlEncode(content));
             AppendCodeBlockClosingTags(result);
         }
 
