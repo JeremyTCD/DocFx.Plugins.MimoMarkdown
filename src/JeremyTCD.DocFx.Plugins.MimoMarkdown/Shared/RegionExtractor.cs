@@ -20,7 +20,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _keyExtractorsMap = keyExtractors;
         }
 
-        public string GetRegions(string langauge, string src, List<Tag> tags, IMarkdownToken token, string[] fileLines)
+        public string GetRegions(string langauge, string src, List<Region> regions, IMarkdownToken token, string[] fileLines)
         {
             StringBuilder result = new StringBuilder();
 
@@ -42,7 +42,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             // Invalid key
             if (!_keyExtractorsMap.TryGetValue(key, out List<ICodeSnippetExtractor> keyExtractors))
             {
-                Logger.LogError($"{key} does not have tag extractors.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"{key} does not have region extractors.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
@@ -50,9 +50,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 GetOrAdd(src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(keyExtractors, fileLines))).
                 Value;
 
-            foreach (Tag tag in tags)
+            foreach (Region region in regions)
             {
-                AppendRegion(result, resolveResultsMap, tag, token, fileLines);
+                AppendRegion(result, resolveResultsMap, region, token, fileLines);
             }
 
             return result.ToString();
@@ -60,22 +60,22 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         private void AppendRegion(StringBuilder result, 
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap, 
-            Tag tag, 
+            Region region, 
             IMarkdownToken token,
             string[] fileLines)
         {
-            // Tag name does not exist
-            if (!resolveResultsMap.TryGetValue(tag.Name, out List<DfmTagNameResolveResult> resolveResults) &&
-                !resolveResultsMap.TryGetValue($"snippet{tag.Name}", out resolveResults))
+            // Region name does not exist
+            if (!resolveResultsMap.TryGetValue(region.Name, out List<DfmTagNameResolveResult> resolveResults) &&
+                !resolveResultsMap.TryGetValue($"snippet{region.Name}", out resolveResults))
             {
-                Logger.LogError($"{tag.Name} does not exist.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"{region.Name} does not exist.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
-            // Same tag name used multiple times
+            // Same region name used multiple times
             if (resolveResults.Count > 1)
             {
-                Logger.LogError($"Multiple occurences of {tag.Name}.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"Multiple occurences of {region.Name}.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
@@ -84,11 +84,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             // Resolve error
             if (!string.IsNullOrEmpty(resolveResult.ErrorMessage))
             {
-                Logger.LogError($"Error retrieving content for tag \"{tag.Name}\": {resolveResult.ErrorMessage}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                Logger.LogError($"Error retrieving content for region with name \"{region.Name}\": {resolveResult.ErrorMessage}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
                 throw new InvalidOperationException();
             }
 
-            bool autoDedent = tag.DedentLength < 0;
+            bool autoDedent = region.DedentLength < 0;
             List<string> linesForRegion = new List<string>(resolveResult.EndLine - resolveResult.StartLine + 1);
             for (int i = resolveResult.StartLine - 1; i < resolveResult.EndLine; i++)
             {
@@ -96,13 +96,13 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 {
                     // Assume that all lines either begin with spaces or tabs
                     int numSpaces = fileLines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
-                    tag.DedentLength = numSpaces < tag.DedentLength || tag.DedentLength < 0 ? numSpaces : tag.DedentLength;
+                    region.DedentLength = numSpaces < region.DedentLength || region.DedentLength < 0 ? numSpaces : region.DedentLength;
                 }
 
                 linesForRegion.Add(fileLines[i]);
             }
 
-            if(tag.LineBreak == LineBreakOption.Before || tag.LineBreak == LineBreakOption.Both)
+            if(region.LineBreak == LineBreakOption.Before || region.LineBreak == LineBreakOption.Both)
             {
                 result.Append("\n");
             }
@@ -110,10 +110,10 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             foreach (string line in linesForRegion)
             {
                 // remove whitespace from start of line
-                result.AppendLine(line.Substring(tag.DedentLength));
+                result.AppendLine(line.Substring(region.DedentLength));
             }
 
-            if (tag.LineBreak == LineBreakOption.After || tag.LineBreak == LineBreakOption.Both)
+            if (region.LineBreak == LineBreakOption.After || region.LineBreak == LineBreakOption.Both)
             {
                 result.Append("\n");
             }
@@ -121,7 +121,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
         {
-            // GetAll retrieves all tags, not all will be used, so don't throw here if a tag name has multiple corresponding results or if there are
+            // GetAll retrieves all tag resolve results, not all will be used, so don't throw here if a region name has multiple corresponding results or if there are
             // resolve errors.
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = new Dictionary<string, List<DfmTagNameResolveResult>>();
 

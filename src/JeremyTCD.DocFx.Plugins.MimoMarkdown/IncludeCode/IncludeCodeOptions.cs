@@ -1,17 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-
-namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
+﻿namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public class IncludeCodeOptions
+    public class IncludeCodeOptions : IncludeFileOptions
     {
-        [JsonProperty(Required = Required.Always)]
-        public string Src { get; set; }
-
-        public List<Range> Ranges { get; set; } = null;
-
-        public List<Tag> Tags { get; set; } = null;
-
         public string Language { get; set; } = null;
 
         public bool ShowLineNumbers { get; set; } = false;

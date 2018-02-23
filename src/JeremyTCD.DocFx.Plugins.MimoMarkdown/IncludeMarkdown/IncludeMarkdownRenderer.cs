@@ -35,9 +35,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             // Get content
             string content;
-            if (options.Tags != null && options.Tags.Any())
+            if (options.Regions != null && options.Regions.Any())
             {
-                content = _fileClippingService.GetRegions("markdown", options.Src, options.Tags, fileContent, token);
+                content = _fileClippingService.GetRegions("markdown", options.Src, options.Regions, fileContent, token);
             }
             else if (options.Ranges != null && options.Ranges.Any())
             {
@@ -79,7 +79,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 context = context.SetFilePathStack(filePathStack) as MarkdownBlockContext;
             }
 
-            // TODO cache generated markup. Would make more sense to cache using token.src and clipping data, e.g src and tags. This way FileClippingService methods would not even need to be called.
+            // TODO cache generated markup. Would make more sense to cache using token.src and clipping data, e.g src and Regions. This way FileClippingService methods would not even need to be called.
 
             // Process as markdown
             DfmEngine currentEngine = (DfmEngine)renderer.Engine;

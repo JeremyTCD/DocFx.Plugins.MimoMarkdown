@@ -35,9 +35,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             // Get content
             string content;
-            if (options.Tags != null && options.Tags.Any())
+            if (options.Regions != null && options.Regions.Any())
             {
-                content = _fileClippingService.GetRegions(options.Language, options.Src, options.Tags, fileContent, token);
+                content = _fileClippingService.GetRegions(options.Language, options.Src, options.Regions, fileContent, token);
             }
             else if (options.Ranges != null && options.Ranges.Any())
             {

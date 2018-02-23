@@ -16,12 +16,12 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _regionExtractor = regionExtractor;
         }
 
-        public string GetRegions(string language, string src, List<Tag> tags, string fileContent, IMarkdownToken token)
+        public string GetRegions(string language, string src, List<Region> regions, string fileContent, IMarkdownToken token)
         {
             // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            return _regionExtractor.GetRegions(language, src, tags, token, fileLines);
+            return _regionExtractor.GetRegions(language, src, regions, token, fileLines);
         }
 
         public string GetRanges(List<Range> ranges, string fileContent, IMarkdownToken token)
