@@ -16,9 +16,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             RegionExtractor regionExtractor = regionExtractorFactory.BuildRegionExtractor();
             CodeBlockRenderingService codeBlockRenderingService = new CodeBlockRenderingService();
             HttpClient httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
             FileRetrievalService fileRetrievalService = new FileRetrievalService(httpClient);
             FileClippingService fileClippingService = new FileClippingService(regionExtractor);
-            httpClient.Timeout = TimeSpan.FromSeconds(5);
 
             yield return new AlertRenderer();
             yield return new HeadingRenderer();

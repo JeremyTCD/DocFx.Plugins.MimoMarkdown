@@ -44,7 +44,14 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                     try
                     {
                         HttpResponseMessage response = _httpClient.GetAsync(uriResult).Result;
-                        return response.Content.ReadAsStringAsync().Result;
+                        string result = response.Content.ReadAsStringAsync().Result;
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new HttpRequestException($"Request to \"{src}\" failed with status code \"{response.StatusCode}\" and message \"{result}\".");
+                        }
+
+                        return result;
                     }
                     catch(TaskCanceledException taskCanceledException)
                     {
