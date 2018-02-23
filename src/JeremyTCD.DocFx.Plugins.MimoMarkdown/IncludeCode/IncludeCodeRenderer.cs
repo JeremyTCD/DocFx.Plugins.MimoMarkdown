@@ -51,9 +51,11 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _codeBlockRenderingService.
                 AppendCodeBlock(
                     result,
+                    options.Src,
                     token.SourceInfo.File,
                     content,
                     options.BlockID,
+                    options.Title,
                     options.ShowLineNumbers,
                     options.Highlight,
                     options.Language,
