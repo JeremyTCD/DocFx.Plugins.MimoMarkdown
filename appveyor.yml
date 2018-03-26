@@ -3,7 +3,7 @@ skip_non_tags: true
 image: Visual Studio 2017
 environment:
   nuget_key:
-    secure: xUmS9XKGSPKE3xAm/bvBD4St6an/7BlfLGUuIS8jPl8ofhKESLQpgXmQJ/8Cjx+C
+    secure: +r4FM/TT0NmiPId1u1E3cV/3MC9yHMwCh8ETCLLvh+i8MVnaAPM0Dhd4DFWkOU+e
 build_script:
 - ps: |
     dotnet restore
