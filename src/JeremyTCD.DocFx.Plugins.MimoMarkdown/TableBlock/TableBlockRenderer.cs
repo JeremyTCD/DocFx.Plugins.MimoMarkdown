@@ -17,61 +17,69 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
         public override StringBuffer Render(IMarkdownRenderer renderer, MarkdownTableBlockToken token, MarkdownBlockContext context)
         {
-            // TODO Needs to be more user friendly on narrow screens. Perhaps use flexbox instead, morph when narrow etc.
-
+            string[] labels = new string[token.Header.Length];
             StringBuffer result = "<div class=\"table-block\">\n";
-            result += "<table>\n<thead>\n";
+            result += "<div class=\"full-table split-block\">\n";
+
+            result += "<div class=\"full-table-header-group split-none\">\n";
             // header
-            result += "<tr>\n";
-            var cell = StringBuffer.Empty;
+            result += "<div class=\"full-table-row\">\n";
             for (int i = 0; i < token.Header.Length; i++)
             {
+                result += "<div class=\"full-table-cell";
                 if (i < token.Align.Length && token.Align[i] != Align.NotSpec)
                 {
-                    result += "<th style=\"text-align:";
+                    result += " text-align-";
                     result += token.Align[i].ToString().ToLower();
-                    result += "\">";
                 }
-                else
+                result += "\">";
+
+                foreach (IMarkdownToken item in token.Header[i].Content.Tokens)
                 {
-                    result += "<th>";
+                    string label = renderer.Render(item);
+                    labels[i] = label;
+                    result += label;
                 }
-                foreach (var item in token.Header[i].Content.Tokens)
-                {
-                    result += renderer.Render(item);
-                }
-                result += "</th>\n";
+                result += "</div>\n";
             }
-            result += "</tr>\n";
-            result += "</thead>\n";
-            result += "<tbody>\n";
+            result += "</div>\n"; // table-row
+            result += "</div>\n"; // table-header-group
+
+            result += "<div class=\"full-table-row-group split-table\">\n";
             // body
             for (int i = 0; i < token.Cells.Length; i++)
             {
                 var row = token.Cells[i];
-                result += "<tr>\n";
+                result += "<div class=\"full-table-row split-table-row-group\">\n";
                 for (int j = 0; j < row.Length; j++)
                 {
+                    result += $"<div class=\"full-table-cell split-table-row\">\n";
+                    result += $"<div class=\"full-none split-table-cell\">\n";
+                    result += labels[j];
+                    result += $"</div>\n";
+
+                    // TODO Can a row have fewer columns than other rows?
+                    result += $"<div class=\"split-table-cell";
                     if (j < token.Align.Length && token.Align[j] != Align.NotSpec)
                     {
-                        result += "<td style=\"text-align:";
-                        result += token.Align[j].ToString().ToLower();
-                        result += "\">";
+                        string alignment = token.Align[j].ToString().ToLower(); 
+                        result += $" text-align-{alignment} vertical-align-{alignment}";
                     }
-                    else
-                    {
-                        result += "<td>";
-                    }
-                    foreach (var item in row[j].Content.Tokens)
+                    result += "\">\n"; // header table cell
+                    foreach (IMarkdownToken item in row[j].Content.Tokens)
                     {
                         result += renderer.Render(item);
                     }
-                    result += "</td>\n";
+                    result += "</div>\n"; // content table cell
+                    result += "</div>\n"; // outer table cell
                 }
-                result += "</tr>\n";
+                result += "</div>\n"; // table-row
             }
+            result += "</div>\n"; // table-row-group
+            result += "</div>\n"; // table
+            result += "</div>\n"; // table-block
 
-            return result + "</tbody>\n" + "</table>\n" + "</div>\n";
+            return result;
         }
     }
 }
