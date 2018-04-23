@@ -12,40 +12,40 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     public class RegionExtractorFactory
     {
         // C family code snippet comment block: // <[/]snippetname>
-        private static readonly Regex CFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\/{2}\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex CFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\/{2}\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex CFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\/{2}\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex CFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\/{2}\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Basic family code snippet comment block: ' <[/]snippetname>
-        private static readonly Regex BasicFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\'\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex BasicFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\'\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex BasicFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\'\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex BasicFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\'\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Markup language family code snippet block: <!-- <[/]snippetname> -->
         private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex MarkupLanguageFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\<\!\-{2}\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*\-{2}\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Sql family code snippet block: -- <[/]snippetname>
-        private static readonly Regex SqlFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\-{2}\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex SqlFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\-{2}\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex SqlFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*\-{2}\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex SqlFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*\-{2}\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Script family snippet comment block: # <[/]snippetname>
-        private static readonly Regex ScriptFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*#\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex ScriptFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*#\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ScriptFamilyCodeSnippetCommentStartLineRegex = new Regex(@"^\s*#\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ScriptFamilyCodeSnippetCommentEndLineRegex = new Regex(@"^\s*#\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Lisp code snippet comment block: rem <[/]snippetname>
-        private static readonly Regex BatchFileCodeSnippetRegionStartLineRegex = new Regex(@"^\s*rem\s+\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex BatchFileCodeSnippetRegionEndLineRegex = new Regex(@"^\s*rem\s+\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex BatchFileCodeSnippetRegionStartLineRegex = new Regex(@"^\s*rem\s+\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex BatchFileCodeSnippetRegionEndLineRegex = new Regex(@"^\s*rem\s+\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // C# code snippet region block: start -> #region snippetname, end -> #endregion
         private static readonly Regex CSharpCodeSnippetRegionStartLineRegex = new Regex(@"^\s*#\s*region(?:\s+(?<name>.+?))?\s*$", RegexOptions.Compiled);
         private static readonly Regex CSharpCodeSnippetRegionEndLineRegex = new Regex(@"^\s*#\s*endregion(?:\s.*)?$", RegexOptions.Compiled);
 
         // Erlang code snippet comment block: % <[/]snippetname>
-        private static readonly Regex ErlangCodeSnippetRegionStartLineRegex = new Regex(@"^\s*%\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex ErlangCodeSnippetRegionEndLineRegex = new Regex(@"^\s*%\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ErlangCodeSnippetRegionStartLineRegex = new Regex(@"^\s*%\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ErlangCodeSnippetRegionEndLineRegex = new Regex(@"^\s*%\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Lisp code snippet comment block: ; <[/]snippetname>
-        private static readonly Regex LispCodeSnippetRegionStartLineRegex = new Regex(@"^\s*;\s*\<\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex LispCodeSnippetRegionEndLineRegex = new Regex(@"^\s*;\s*\<\s*\/\s*(?<name>[\w\.]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex LispCodeSnippetRegionStartLineRegex = new Regex(@"^\s*;\s*\<\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex LispCodeSnippetRegionEndLineRegex = new Regex(@"^\s*;\s*\<\s*\/\s*(?<name>[\w\.\-]+)\s*\>\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // VB code snippet Region block: start -> # Region "snippetname", end -> # End Region
         private static readonly Regex VBCodeSnippetRegionRegionStartLineRegex = new Regex(@"^\s*#\s*Region(?:\s+(?<name>.+?))?\s*$", RegexOptions.Compiled);
@@ -62,7 +62,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 "vb", "vbhtml");
             AddExtractor(
                 new FlatNameCodeSnippetExtractor(CFamilyCodeSnippetCommentStartLineRegex, CFamilyCodeSnippetCommentEndLineRegex),
-                "actionscript", "arduino", "assembly", "cpp", "csharp", "cshtml", "cuda", "d", "fsharp", "go", "java", "javascript", "pascal", "php", "processing", "rust", "scala", "smalltalk", "swift", "typescript");
+                "actionscript", "arduino", "assembly", "cpp", "csharp", "cshtml", "cuda", "d", "fsharp", "go", "java", "javascript", "pascal", "php", "processing", "rust", "scala", "smalltalk", "swift", "typescript", "sass", "text");
             AddExtractor(
                 new FlatNameCodeSnippetExtractor(MarkupLanguageFamilyCodeSnippetCommentStartLineRegex, MarkupLanguageFamilyCodeSnippetCommentEndLineRegex),
                 "xml", "xaml", "html", "cshtml", "vbhtml", "markdown");
@@ -125,7 +125,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             AddAliases("sql", ".sql");
             AddAliases("swift", ".swift");
             AddAliases("typescript", "ts", ".ts");
+            AddAliases("sass", ".scss", ".sass");
             AddAliases("xaml", ".xaml");
+            AddAliases("text", ".txt");
             AddAliases("xml", "xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl");
             AddAliases("vb", "vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba");
 
