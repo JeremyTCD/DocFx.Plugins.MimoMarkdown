@@ -18,7 +18,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             HttpClient httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(5);
             FileRetrievalService fileRetrievalService = new FileRetrievalService(httpClient);
-            FileClippingService fileClippingService = new FileClippingService(regionExtractor);
+            RangeExtractor rangeExtractor = new RangeExtractor();
+            DedentingService dedentingService = new DedentingService();
+            FileClippingService fileClippingService = new FileClippingService(rangeExtractor, regionExtractor, dedentingService);
 
             yield return new AlertRenderer();
             yield return new HeadingRenderer();

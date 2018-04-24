@@ -1,8 +1,9 @@
 ﻿using Microsoft.DocAsCode.Common;
+using Microsoft.DocAsCode.Dfm;
 using Microsoft.DocAsCode.MarkdownLite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
@@ -10,18 +11,31 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
     public class FileClippingService
     {
         private RegionExtractor _regionExtractor;
+        private RangeExtractor _rangeExtractor;
+        private DedentingService _dedentingService;
 
-        public FileClippingService(RegionExtractor regionExtractor)
+        public FileClippingService(RangeExtractor rangeExtractor, RegionExtractor regionExtractor, DedentingService dedentingService)
         {
             _regionExtractor = regionExtractor;
+            _rangeExtractor = rangeExtractor;
+            _dedentingService = dedentingService;
         }
 
         public string GetRegions(string language, string src, List<Region> regions, string fileContent, IMarkdownToken token)
         {
-            // Split
             string[] fileLines = GetFileLines(fileContent);
 
-            return _regionExtractor.GetRegions(language, src, regions, token, fileLines);
+            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = _regionExtractor.GetResolveResultsMap(fileLines, language, src, token);
+
+            StringBuilder result = new StringBuilder();
+
+            foreach (Region region in regions)
+            {
+                string[] regionLines = _regionExtractor.ExtractRegion(fileLines, resolveResultsMap, region, token);
+                AppendLines(result, regionLines, region);
+            }
+
+            return result.ToString();
         }
 
         public string GetRanges(List<Range> ranges, string fileContent, IMarkdownToken token)
@@ -33,39 +47,39 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 
             foreach (Range range in ranges)
             {
-                if (range.Start - 1 < 0 || range.End > fileLines.Length
-                    || range.End < range.Start)
-                {
-                    Logger.LogError($"Invalid range [{range.Start}, {range.End}].", file: token.SourceInfo.File, line: token.SourceInfo.LineNumber.ToString());
-                    throw new InvalidOperationException();
-                }
-
-                AppendRange(result, range, fileLines);
+                string[] rangeLines = _rangeExtractor.ExtractRange(fileLines, range, token);
+                AppendLines(result, rangeLines, range);
             }
 
             return result.ToString();
         }
 
-        private void AppendRange(StringBuilder result, Range range, string[] fileLines)
+        public string GetFile(IncludeFileOptions includeFileOptions, string fileContent)
         {
-            bool autoDedent = range.DedentLength < 0;
-            List<string> linesForRange = new List<string>(range.End - range.Start + 1);
-            for (int i = range.Start - 1; i < range.End; i++)
-            {
-                if (autoDedent)
-                {
-                    // Assume that all lines either begin with spaces or tabs
-                    int numSpaces = fileLines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
-                    range.DedentLength = numSpaces < range.DedentLength || range.DedentLength < 0 ? numSpaces : range.DedentLength;
-                }
+            StringBuilder result = new StringBuilder();
+            string[] fileLines = GetFileLines(fileContent);
+            AppendLines(result, fileLines, includeFileOptions);
 
-                linesForRange.Add(fileLines[i]);
+            return result.ToString();
+        }
+
+        private void AppendLines(StringBuilder result, string[] lines, ClippingArea clippingArea)
+        {
+            _dedentingService.Dedent(lines, clippingArea);
+
+            if (!string.IsNullOrEmpty(clippingArea.Before))
+            {
+                result.Append(clippingArea.Before);
             }
 
-            foreach (string line in linesForRange)
+            foreach (string line in lines)
             {
-                // remove whitespace from start of line
-                result.AppendLine(line.Substring(range.DedentLength));
+                result.AppendLine(line);
+            }
+
+            if (!string.IsNullOrEmpty(clippingArea.After))
+            {
+                result.Append(clippingArea.After);
             }
         }
 

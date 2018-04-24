@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
@@ -20,49 +19,10 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             _keyExtractorsMap = keyExtractors;
         }
 
-        public string GetRegions(string langauge, string src, List<Region> regions, IMarkdownToken token, string[] fileLines)
-        {
-            StringBuilder result = new StringBuilder();
-
-            string key = langauge;
-            if (string.IsNullOrEmpty(key))
-            {
-                try
-                {
-                    // TODO remote sources
-                    key = Path.GetExtension(src);
-                }
-                catch (Exception exception)
-                {
-                    Logger.LogError($"Unable to retrieve a language or file extension: {exception.Message}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
-                    throw;
-                }
-            }
-
-            // Invalid key
-            if (!_keyExtractorsMap.TryGetValue(key, out List<ICodeSnippetExtractor> keyExtractors))
-            {
-                Logger.LogError($"{key} does not have region extractors.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
-                throw new InvalidOperationException();
-            }
-
-            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap = _cache.
-                GetOrAdd(src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(keyExtractors, fileLines))).
-                Value;
-
-            foreach (Region region in regions)
-            {
-                AppendRegion(result, resolveResultsMap, region, token, fileLines);
-            }
-
-            return result.ToString();
-        }
-
-        private void AppendRegion(StringBuilder result,
+        public string[] ExtractRegion(string[] fileLines,
             Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap,
             Region region,
-            IMarkdownToken token,
-            string[] fileLines)
+            IMarkdownToken token)
         {
             // Region name does not exist
             if (!resolveResultsMap.TryGetValue(region.Name, out List<DfmTagNameResolveResult> resolveResults) &&
@@ -88,35 +48,42 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 throw new InvalidOperationException();
             }
 
-            bool autoDedent = region.DedentLength < 0;
-            List<string> linesForRegion = new List<string>(resolveResult.EndLine - resolveResult.StartLine + 1);
-            for (int i = resolveResult.StartLine - 1; i < resolveResult.EndLine; i++)
+            int startIndex = resolveResult.StartLine - 1;
+            int length = resolveResult.EndLine - startIndex;
+            string[] result = new string[length];
+            Array.Copy(fileLines, startIndex, result, 0, length);
+
+            return result;
+        }
+
+        public Dictionary<string, List<DfmTagNameResolveResult>> GetResolveResultsMap(string[] lines, string language, string src, IMarkdownToken token)
+        {
+            string key = language;
+            if (string.IsNullOrEmpty(key))
             {
-                if (autoDedent)
+                try
                 {
-                    // Assume that all lines either begin with spaces or tabs
-                    int numSpaces = fileLines[i].TakeWhile(c => char.IsWhiteSpace(c)).Count();
-                    region.DedentLength = numSpaces < region.DedentLength || region.DedentLength < 0 ? numSpaces : region.DedentLength;
+                    // TODO remote sources
+                    key = Path.GetExtension(src);
                 }
-
-                linesForRegion.Add(fileLines[i]);
+                catch (Exception exception)
+                {
+                    Logger.LogError($"Unable to retrieve a language or file extension: {exception.Message}", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                    throw;
+                }
             }
 
-            if (!string.IsNullOrEmpty(region.Before))
+            // Get extractors
+            if (!_keyExtractorsMap.TryGetValue(key, out List<ICodeSnippetExtractor> extractors))
             {
-                result.Append(region.Before);
+                Logger.LogError($"{key} does not have region extractors.", token.SourceInfo.File, token.SourceInfo.LineNumber.ToString());
+                throw new InvalidOperationException();
             }
 
-            foreach (string line in linesForRegion)
-            {
-                // remove whitespace from start of line
-                result.AppendLine(line.Substring(region.DedentLength));
-            }
-
-            if (!string.IsNullOrEmpty(region.After))
-            {
-                result.Append(region.After);
-            }
+            // Generate or retrieve resolve results (regions and their locations)
+            return _cache.
+                GetOrAdd(src, new Lazy<Dictionary<string, List<DfmTagNameResolveResult>>>(() => GetTagResolveResultsForFile(extractors, lines))).
+                Value;
         }
 
         private Dictionary<string, List<DfmTagNameResolveResult>> GetTagResolveResultsForFile(List<ICodeSnippetExtractor> keyExtractors, string[] fileLines)
