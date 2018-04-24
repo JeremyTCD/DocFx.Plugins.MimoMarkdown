@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
 {
-    public abstract class IncludeFileOptions
+    public abstract class IncludeFileOptions : ClippingArea
     {
         [JsonProperty(Required = Required.Always)]
         public string Src { get; set; }

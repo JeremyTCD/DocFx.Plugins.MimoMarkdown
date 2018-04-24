@@ -45,7 +45,7 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             }
             else
             {
-                content = fileContent;
+                content = _fileClippingService.GetFile(options, fileContent);
             }
 
             _codeBlockRenderingService.
