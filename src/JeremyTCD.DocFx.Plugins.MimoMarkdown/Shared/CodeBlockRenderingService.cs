@@ -223,7 +223,8 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                         break;
                 }
 
-            return result;
+            // Don't include last newline
+            return result - 1;
         }
     }
 }
