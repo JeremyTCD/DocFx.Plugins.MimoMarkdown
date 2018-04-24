@@ -58,9 +58,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
             return result.ToString();
         }
 
-        private void AppendRegion(StringBuilder result, 
-            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap, 
-            Region region, 
+        private void AppendRegion(StringBuilder result,
+            Dictionary<string, List<DfmTagNameResolveResult>> resolveResultsMap,
+            Region region,
             IMarkdownToken token,
             string[] fileLines)
         {
@@ -102,9 +102,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 linesForRegion.Add(fileLines[i]);
             }
 
-            if(region.LineBreak == LineBreakOption.Before || region.LineBreak == LineBreakOption.Both)
+            if (!string.IsNullOrEmpty(region.Before))
             {
-                result.Append("\n");
+                result.Append(region.Before);
             }
 
             foreach (string line in linesForRegion)
@@ -113,9 +113,9 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                 result.AppendLine(line.Substring(region.DedentLength));
             }
 
-            if (region.LineBreak == LineBreakOption.After || region.LineBreak == LineBreakOption.Both)
+            if (!string.IsNullOrEmpty(region.After))
             {
-                result.Append("\n");
+                result.Append(region.After);
             }
         }
 
