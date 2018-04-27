@@ -19,20 +19,21 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
         {
             string[] labels = new string[token.Header.Length];
             StringBuffer result = "<div class=\"table-block\">\n";
-            result += "<div class=\"full-table split-block\">\n";
+            result += "<table>\n";
 
-            result += "<div class=\"full-table-header-group split-none\">\n";
+            result += "<thead>\n";
             // header
-            result += "<div class=\"full-table-row\">\n";
+            result += "<tr>\n";
             for (int i = 0; i < token.Header.Length; i++)
             {
-                result += "<div class=\"full-table-cell";
+                result += "<th";
                 if (i < token.Align.Length && token.Align[i] != Align.NotSpec)
                 {
-                    result += " text-align-";
+                    result += " class=\"align-";
                     result += token.Align[i].ToString().ToLower();
+                    result += "\"";
                 }
-                result += "\">";
+                result += ">\n";
 
                 foreach (IMarkdownToken item in token.Header[i].Content.Tokens)
                 {
@@ -40,43 +41,40 @@ namespace JeremyTCD.DocFx.Plugins.MimoMarkdown
                     labels[i] = label;
                     result += label;
                 }
-                result += "</div>\n";
+                result += "</th>\n";
             }
-            result += "</div>\n"; // table-row
-            result += "</div>\n"; // table-header-group
+            result += "</tr>\n";
+            result += "</thead>\n";
 
-            result += "<div class=\"full-table-row-group split-table\">\n";
+            result += "<tbody>\n";
             // body
             for (int i = 0; i < token.Cells.Length; i++)
             {
                 var row = token.Cells[i];
-                result += "<div class=\"full-table-row split-table-row-group\">\n";
+                result += "<tr>\n";
                 for (int j = 0; j < row.Length; j++)
                 {
-                    result += $"<div class=\"full-table-cell split-table-row\">\n";
-                    result += $"<div class=\"full-none split-table-cell\">\n";
-                    result += labels[j];
-                    result += $"</div>\n";
-
-                    // TODO Can a row have fewer columns than other rows?
-                    result += $"<div class=\"split-table-cell";
+                    result += $"<td data-label=\"{labels[j]}\"";
                     if (j < token.Align.Length && token.Align[j] != Align.NotSpec)
                     {
-                        string alignment = token.Align[j].ToString().ToLower(); 
-                        result += $" text-align-{alignment} vertical-align-{alignment}";
+                        string alignment = token.Align[j].ToString().ToLower();
+                        result += $" class=\"align-{alignment}\"";
                     }
-                    result += "\">\n"; // header table cell
+                    result += ">\n";
+
+                    result += $"<span>";
+
                     foreach (IMarkdownToken item in row[j].Content.Tokens)
                     {
                         result += renderer.Render(item);
                     }
-                    result += "</div>\n"; // content table cell
-                    result += "</div>\n"; // outer table cell
+                    result += "</span>\n";
+                    result += "</td>\n";
                 }
-                result += "</div>\n"; // table-row
+                result += "</tr>\n";
             }
-            result += "</div>\n"; // table-row-group
-            result += "</div>\n"; // table
+            result += "</tbody>\n";
+            result += "</table>\n";
             result += "</div>\n"; // table-block
 
             return result;
