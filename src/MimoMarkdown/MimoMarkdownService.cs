@@ -5,7 +5,6 @@
     using Microsoft.DocAsCode.Plugins;
     using System;
 
-    // TODO add roslynator
     // TODO catch exceptions and log using Logger
     // TODO clean up exception messages
     // TODO look through default extensions
@@ -72,8 +71,6 @@
                 UseSmartyPants().
                 UseDiagrams().
                 UseYamlFrontMatter();
-
-
 
             return builder.Build();
         }

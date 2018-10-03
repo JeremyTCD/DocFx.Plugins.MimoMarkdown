@@ -28,6 +28,14 @@
         <PackageReference Include="Microsoft.DocAsCode.Dfm" Version="2.39.2" />
         <PackageReference Include="Microsoft.DocAsCode.MarkdigEngine" Version="2.39.2" />
         <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+        <PackageReference Include="Roslynator.Analyzers" Version="1.9.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Roslynator.CodeFixes" Version="1.9.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="System.Composition.AttributedModel" Version="1.0.31" />
     </ItemGroup>
 
