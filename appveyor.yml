@@ -1,15 +1,16 @@
 version: '{build}'
 skip_non_tags: true
 image: Visual Studio 2017
-environment:
-  nuget_key:
-    secure: +r4FM/TT0NmiPId1u1E3cV/3MC9yHMwCh8ETCLLvh+i8MVnaAPM0Dhd4DFWkOU+e
 build_script:
 - ps: |
-    dotnet restore
-    cd ./src/JeremyTCD.DocFx.Plugins.MimoMarkdown
-    dotnet pack -c release /p:version=$env:APPVEYOR_REPO_TAG_NAME
-deploy_script:
-- ps: |
-    nuget setApiKey $env:nuget_key
-    nuget push "./bin/release/JeremyTCD.DocFx.Plugins.MimoMarkdown.$($env:APPVEYOR_REPO_TAG_NAME).nupkg" -Source https://www.nuget.org/api/v2/package
+    dotnet pack -c Release /p:version=$env:APPVEYOR_REPO_TAG_NAME
+artifacts:
+  - path: '.\src\MimoMarkdown\bin\Release\*.nupkg'
+deploy:
+  provider: NuGet
+  api_key:
+    secure: YuSNfK09e6bNa8EEC2jAsTZP8b8sHN6BDdhrqbI1hRAoqSAUUre5gH8CaW/85NpF
+  skip_symbols: false
+  artifact: /.*\.nupkg/
+cache:
+    - '%USERPROFILE%\.nuget\packages -> **\*.csproj'
